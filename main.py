@@ -1,12 +1,13 @@
+import random
+
 from funcionario import Funcionario, generateRandomValues
 
 i = 0
-idCounter = 0
+ids = [i for i in range(100)]
 
-while i < 5:
+while i < 100:
   f = Funcionario()
-  generateRandomValues(f, idCounter)
-  print(f"Id: {f.cod}\nNome: {f.nome}\nCPF: {f.cpf}\nData de nascimento: {f.data_nascimento}\nSalário: {f.salario}")
-  print("-----------------------------------")
+  id = random.choice(ids)
+  ids.remove(id)
+  generateRandomValues(f, id)
   i += 1
-  idCounter += 1
