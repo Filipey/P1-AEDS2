@@ -9,13 +9,11 @@ class Funcionario:
   data_nascimento: str
   salario: float
 
-def generateRandomValues(f: Funcionario, idCounter: int):
-  f.cod = idCounter
+def generateRandomValues(f: Funcionario, id: int):
+  f.cod = id
   f.nome = "".join(random.choice(string.ascii_lowercase) for _ in range(50))
-  f.cpf = "".join(str(random.randint(0, 9)) for _ in range(15))
-  f.cpf = formatCpf(f.cpf)
-  f.data_nascimento = "".join(str(random.randint(0, 9)) for _ in range(11))
-  f.data_nascimento = formatBirthdayDate(f.data_nascimento)
+  f.cpf = formatCpf("".join(str(random.randint(0, 9)) for _ in range(15)))
+  f.data_nascimento = formatBirthdayDate("".join(str(random.randint(0, 9)) for _ in range(11)))
   f.salario = round(random.uniform(1, 10000), 2)
 
 def formatBirthdayDate(date: str):
