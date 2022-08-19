@@ -45,9 +45,8 @@ def searchLinearEmployeeById(id: int, file_name):
         if byte != "#":
             savedRegister.append(byte)
         if byte == bin(id):
-            register = file.read(89)
-            print(register)
-        byte = file.read(90)
+            break
+        byte = file.read(1)
 
 
 if __name__ == "__main__":
