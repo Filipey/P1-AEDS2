@@ -1,4 +1,5 @@
 import random
+import time
 
 from funcionario import Funcionario, generateRandomValues
 
@@ -34,6 +35,8 @@ def generateBinaryDatabase(file_name: str):
 
 def LinearSearchEmployeeById(file_name):
     file = open(file_name + ".dat")
+    start = time.time()
+    comparisons = 0
     byte = file.read(1)
     savedRegister = ""
     field = ""
@@ -46,29 +49,28 @@ def LinearSearchEmployeeById(file_name):
         if field == searchId + "|":
           founded = True
         if byte == "#":
+          comparisons += 1
           if founded:
-            return savedRegister[:-1]
+            totalTime = time.time() - start
+            return savedRegister[:-1], comparisons, totalTime
           savedRegister = ""
           field = ""
         if byte == "|":
           field = ""
         
         byte = file.read(1)
+    
 
-def formatRegister(register: str):
+def formatRegister(register: str, comparisons: int, time):
   fields = register.split("|")
-  id = fields[0]
-  name = fields[1]
-  cpf = fields[2]
-  birthday_date = fields[3]
-  salary = fields[4]
+  [id, name, cpf, birthday_date, salary] = fields
 
   print("\nFuncionário encontrado:\n")
-  print(f"Código: {int(id, 2)}\nNome: {name}\nCPF: {cpf}\nData de Aniversário: {birthday_date}\nSalário: {salary}")
+  print(f"Código: {int(id, 2)}\nNome: {name}\nCPF: {cpf}\nData de Aniversário: {birthday_date}\nSalário: {salary}\nComparações: {comparisons}\nTempo gasto: {round(time, 2)}s")
 
 
 if __name__ == "__main__":
     file = input("Digite o nome do arquivo binário: ")
     generateBinaryDatabase(file)
-    register = LinearSearchEmployeeById(file)
-    formatRegister(register)
+    [register, comparisons, timer] = LinearSearchEmployeeById(file)
+    formatRegister(register, comparisons, timer)
