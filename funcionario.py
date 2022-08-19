@@ -3,11 +3,11 @@ import string
 
 
 class Funcionario:
-  cod: int
-  nome: str
-  cpf: str
-  data_nascimento: str
-  salario: float
+  cod: int # 4 bytes
+  nome: str # 50 bytes
+  cpf: str # 15 bytes
+  data_nascimento: str # 11 bytes
+  salario: float # 4 bytes
 
 def generateRandomValues(f: Funcionario, id: int):
   f.cod = id
