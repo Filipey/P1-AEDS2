@@ -13,11 +13,8 @@ def generateBinaryDatabase(file_name: str):
             f = Funcionario()
             id = random.choice(ids)
             ids.remove(id)
-            if i == 0:
-                print("criou id 33")
-                id = 33
             generateRandomValues(f, id)
-            file.write(bin(f.cod).encode())
+            file.write(bin(f.cod)[2:].encode())
             file.write("|".encode())
             file.write(f.nome.encode())
             file.write("|".encode())
@@ -32,24 +29,46 @@ def generateBinaryDatabase(file_name: str):
     except IOError:
         print(IOError)
         exit(1)
-    print("Base de dados gerada com sucesso!")
+    print("\nBase de dados gerada com sucesso!")
     file.close()
 
-
-def searchLinearEmployeeById(id: int, file_name):
+def LinearSearchEmployeeById(file_name):
     file = open(file_name + ".dat")
     byte = file.read(1)
-    savedRegister = []
+    savedRegister = ""
+    field = ""
+    searchId = bin(int(input("\nForam gerados ids de 0 a 99. Digite um id para pesquisar: ")))[2:]
+    founded = False
 
     while byte:
-        if byte != "#":
-            savedRegister.append(byte)
-        if byte == bin(id):
-            break
+        field += byte
+        savedRegister += byte
+        if field == searchId + "|":
+          founded = True
+        if byte == "#":
+          if founded:
+            return savedRegister
+          savedRegister = ""
+          field = ""
+        if byte == "|":
+          field = ""
+        
         byte = file.read(1)
+
+def formatRegister(register: str):
+  fields = register.split("|")
+  id = fields[0]
+  name = fields[1]
+  cpf = fields[2]
+  birthday_date = fields[3]
+  salary = fields[4][:-1]
+
+  print("\nFuncionário encontrado:\n")
+  print(f"Código: {int(id, 2)}\nNome: {name}\nCPF: {cpf}\nData de Aniversário: {birthday_date}\nSalário: {salary}")
 
 
 if __name__ == "__main__":
-    file = input("Digite o nome do arquivo binário\n")
+    file = input("Digite o nome do arquivo binário: ")
     generateBinaryDatabase(file)
-    searchLinearEmployeeById(33, file)
+    register = LinearSearchEmployeeById(file)
+    formatRegister(register)
