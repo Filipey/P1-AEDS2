@@ -47,7 +47,7 @@ def LinearSearchEmployeeById(file_name):
           founded = True
         if byte == "#":
           if founded:
-            return savedRegister
+            return savedRegister[:-1]
           savedRegister = ""
           field = ""
         if byte == "|":
@@ -61,7 +61,7 @@ def formatRegister(register: str):
   name = fields[1]
   cpf = fields[2]
   birthday_date = fields[3]
-  salary = fields[4][:-1]
+  salary = fields[4]
 
   print("\nFuncionário encontrado:\n")
   print(f"Código: {int(id, 2)}\nNome: {name}\nCPF: {cpf}\nData de Aniversário: {birthday_date}\nSalário: {salary}")
