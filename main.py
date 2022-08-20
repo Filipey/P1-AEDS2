@@ -85,6 +85,7 @@ def binarySearchEmployeeById(file_name, id):
 def formatRegister(register: str, comparisons: int, time):
     if register is None:
       print("Não foi encontrado nenhum funcionário com esse Id.")
+      print(f"O total de comparações foi {comparisons}, e o tempo gasto foi {time}s")
       return
 
     fields = register.split("|")
