@@ -9,6 +9,11 @@ class Funcionario:
   data_nascimento: str # 11 bytes
   salario: float # 4 bytes
 
+
+class KeyId:
+  id: int
+  RRN: int
+
 def generateRandomValues(f: Funcionario, id: int):
   f.cod = id
   f.nome = "".join(random.choice(string.ascii_lowercase) for _ in range(50))
