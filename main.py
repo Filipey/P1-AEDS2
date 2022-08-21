@@ -1,7 +1,9 @@
+import os
 import random
 import time
+from ctypes import sizeof
 
-from funcionario import Funcionario, generateRandomValues
+from funcionario import Funcionario, KeyId, generateRandomValues
 
 
 def generateBinaryDatabase(file_name: str):
@@ -34,13 +36,33 @@ def generateBinaryDatabase(file_name: str):
     file.close()
 
 
-def linearSearchEmployeeById(file_name):
+def getFileSize(file_name):
+    file = open(file_name + ".dat", "r")
+    file.seek(0, os.SEEK_END)
+    return file.tell()
+
+
+def readRegister(file_name, seek=0):
+  file = open(file_name + ".dat", "r")
+  register = ""
+  byte = file.read(1)
+  file.seek(seek)
+
+  while byte != '#':
+    register += byte
+    byte = file.read(1)
+
+  return register
+
+
+def linearSearchEmployeeById(file_name, id):
     file = open(file_name + ".dat", "rb")
+    print(f"Pesquisando o funcionário {id} por busca sequencial...")
     comparisons = 0
     byte = file.read(1).decode()
     savedRegister = ""
     field = ""
-    searchId = bin(int(input("\nForam gerados ids de 0 a 99. Digite um id para pesquisar: ")))[2:]
+    searchId = bin(id)[2:]
     start = time.time()
     founded = False
 
@@ -53,6 +75,7 @@ def linearSearchEmployeeById(file_name):
             comparisons += 1
             if founded:
                 totalTime = time.time() - start
+                file.close()
                 return savedRegister[:-1], comparisons, totalTime
             savedRegister = ""
             field = ""
@@ -60,33 +83,35 @@ def linearSearchEmployeeById(file_name):
             field = ""
 
         byte = file.read(1).decode()
+    file.close()
     return None, comparisons, time.time() - start
 
-def readEmployee(file_name):
-    file = open(file_name + ".dat", "rb")
-    register = file.read().split("|")
 
-    for field in register:
-        print(field)
+def keySorting(file_name: str):
+    start = time.time()
+    file = open(file_name + ".dat", "r+")
+    size = getFileSize(file_name)
+    keys = [KeyId() for _ in range(size)]
+    pos = 0
+    offset = 0
 
+    while pos < size:
+      register = readRegister(file_name, offset)
+      offset = len(register)
+      file.seek(pos * offset)
+      keys[pos].RRN = file.tell()
+      id = int(register.split("|")[0], 2)
+      keys[pos].id = id
+      pos += 1
 
-def binarySearchEmployeeById(file_name, id):
-    searchId = input("Buscando o mesmo funcionário por busca binária: \n")
-    file = open(file_name + ".dat", "rb")
-    left = 0
-    right = len(file)
-
-    while left < right:
-        middle = (left + right) // 2
-        file.seek(middle * 84)
-        readEmployee(file_name)
+    file.close()
 
 
 def formatRegister(register: str, comparisons: int, time):
     if register is None:
-      print("Não foi encontrado nenhum funcionário com esse Id.")
-      print(f"O total de comparações foi {comparisons}, e o tempo gasto foi {time}s")
-      return
+        print("Não foi encontrado nenhum funcionário com esse Id.")
+        print(f"O total de comparações foi {comparisons}, e o tempo gasto foi {time}s")
+        return
 
     fields = register.split("|")
     [id, name, cpf, birthday_date, salary] = fields
@@ -105,5 +130,7 @@ def formatRegister(register: str, comparisons: int, time):
 if __name__ == "__main__":
     file = input("Digite o nome do arquivo binário: ")
     generateBinaryDatabase(file)
-    register, comparisons, timer = linearSearchEmployeeById(file)
+    searchId = int(input("Digite um id para buscar no arquivo: \n"))
+    register, comparisons, timer = linearSearchEmployeeById(file, searchId)
     formatRegister(register, comparisons, timer)
+    keySorting(file)
