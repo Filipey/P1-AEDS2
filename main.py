@@ -1,6 +1,6 @@
-import os
 import random
 import time
+from turtle import right
 
 from funcionario import Funcionario, KeyId, generateRandomValues
 
@@ -98,6 +98,35 @@ def linearSearchEmployeeById(file_name, id):
     file.close()
     return None, comparisons, time.time() - start
 
+def binarySearch(file_name, id):
+  start = time.time()
+  file = open(file_name + ".dat", "rb")
+  comparisons = 0
+  left = 0
+  right = getFileSize(file_name) - 1
+  file.seek(0, 0)
+  offset = 0
+  register = ""
+
+  while left <= right:
+    middle = int((left + right) / 2)
+    file.seek(offset)
+    register, hashSeek = readRegister(file_name, offset)
+    offset = hashSeek
+    registerId = int(register.split("|")[0], 2)
+
+    if id == registerId:
+      comparisons += 1
+      return register, comparisons, time.time() - start
+    elif registerId < id:
+      comparisons += 1
+      left = middle + 1
+    else:
+      comparisons += 1
+      right = middle - 1
+
+  return None, comparisons, time.time() - start
+  
 
 def keySorting(file_name: str, sorted_file_name):
     start = time.time()
@@ -136,7 +165,7 @@ def keySorting(file_name: str, sorted_file_name):
 
     file.close()
     sort_file.close()
-    print(f"Tempo gasto para ordenação: {time.time() - start}")
+    print(f"\nTempo gasto para ordenação: {time.time() - start}s")
 
 
 def formatRegister(register: str, comparisons: int, time):
@@ -148,7 +177,7 @@ def formatRegister(register: str, comparisons: int, time):
     fields = register.split("|")
     [id, name, cpf, birthday_date, salary] = fields
 
-    print("\nFuncionário encontrado:\n")
+    print("Funcionário encontrado:\n")
     print(
         f"Código: {int(id, 2)}"
         f"\nNome: {name}"
@@ -162,10 +191,11 @@ def formatRegister(register: str, comparisons: int, time):
 if __name__ == "__main__":
     file = input("Digite o nome do arquivo binário: ")
     generateBinaryDatabase(file)
-    # print(f"Primeiro registro ao criar db: {readRegister(file)}")
-    searchId = int(input("Digite um id para buscar no arquivo: \n"))
+    searchId = int(input("Digite um id para buscar no arquivo, de forma sequencial: \n"))
     register, comparisons, timer = linearSearchEmployeeById(file, searchId)
     formatRegister(register, comparisons, timer)
-    sortedFile = input("Digite o nome do novo arquivo ordenado: ")
+    sortedFile = input("\nDigite o nome do novo arquivo ordenado: ")
     keySorting(file, sortedFile)
-    # print(f"Primeiro registro após ordenar arquivo: {readRegister(sortedFile)}")
+    print("Buscando pelo mesmo funcionário por Busca Binária:\n")
+    binary_register, binary_comparisons, binary_timer = binarySearch(sortedFile, searchId)
+    formatRegister(binary_register, binary_comparisons, binary_timer)
