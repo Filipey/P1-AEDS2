@@ -1,3 +1,4 @@
+import os
 import random
 import sys
 import time
@@ -105,7 +106,7 @@ def binarySearch(file_name, id):
   left = 0
   right = getFileSize(file_name) - 1
   file.seek(0, 0)
-  offset = 0
+  offset = 1
   register = ""
 
   while left <= right:
@@ -163,6 +164,7 @@ def keySorting(file_name: str, sorted_file_name):
       sort_file.write(register.encode() + "#".encode())
 
     file.close()
+    os.remove(file_name + ".dat")
     sort_file.close()
     print(f"\nTempo gasto para ordenação: {time.perf_counter() - start}s")
 
