@@ -1,6 +1,6 @@
 import random
+import sys
 import time
-from turtle import right
 
 from funcionario import Funcionario, KeyId, generateRandomValues
 
@@ -75,7 +75,7 @@ def linearSearchEmployeeById(file_name, id):
     savedRegister = ""
     field = ""
     searchId = bin(id)[2:]
-    start = time.time()
+    start = time.perf_counter()
     founded = False
 
     while byte:
@@ -86,7 +86,7 @@ def linearSearchEmployeeById(file_name, id):
         if byte == "#":
             comparisons += 1
             if founded:
-                totalTime = time.time() - start
+                totalTime = time.perf_counter() - start
                 file.close()
                 return savedRegister[:-1], comparisons, totalTime
             savedRegister = ""
@@ -96,10 +96,10 @@ def linearSearchEmployeeById(file_name, id):
 
         byte = file.read(1).decode()
     file.close()
-    return None, comparisons, time.time() - start
+    return None, comparisons, time.perf_counter() - start
 
 def binarySearch(file_name, id):
-  start = time.time()
+  start = time.perf_counter()
   file = open(file_name + ".dat", "rb")
   comparisons = 0
   left = 0
@@ -109,15 +109,14 @@ def binarySearch(file_name, id):
   register = ""
 
   while left <= right:
-    middle = int((left + right) / 2)
-    file.seek(offset)
-    register, hashSeek = readRegister(file_name, offset)
+    middle = int((left + right) // 2)
+    register, hashSeek = readRegister(file_name, middle * offset)
     offset = hashSeek
     registerId = int(register.split("|")[0], 2)
 
     if id == registerId:
       comparisons += 1
-      return register, comparisons, time.time() - start
+      return register, comparisons, time.perf_counter() - start
     elif registerId < id:
       comparisons += 1
       left = middle + 1
@@ -125,11 +124,11 @@ def binarySearch(file_name, id):
       comparisons += 1
       right = middle - 1
 
-  return None, comparisons, time.time() - start
+  return None, comparisons, time.perf_counter() - start
   
 
 def keySorting(file_name: str, sorted_file_name):
-    start = time.time()
+    start = time.perf_counter()
     file = open(file_name + ".dat", "r")
     size = getFileSize(file_name)
     keys = [KeyId() for _ in range(size)]
@@ -165,7 +164,7 @@ def keySorting(file_name: str, sorted_file_name):
 
     file.close()
     sort_file.close()
-    print(f"\nTempo gasto para ordenação: {time.time() - start}s")
+    print(f"\nTempo gasto para ordenação: {time.perf_counter() - start}s")
 
 
 def formatRegister(register: str, comparisons: int, time):
