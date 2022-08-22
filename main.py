@@ -128,7 +128,7 @@ def binarySearch(file_name, id):
   return None, comparisons, time.perf_counter() - start
   
 
-def keySorting(file_name: str, sorted_file_name):
+def keySorting(file_name: str):
     start = time.perf_counter()
     file = open(file_name + ".dat", "r")
     size = getFileSize(file_name)
@@ -156,7 +156,7 @@ def keySorting(file_name: str, sorted_file_name):
 
     file.seek(0, 0)
 
-    sort_file = open(sorted_file_name + ".dat", "wb")
+    sort_file = open(file_name + "_ordenado" + ".dat", "wb")
     print(f"Gerando arquivo ordenado...")
     for k in range(0, size):
       seek = file.seek(keys[k].RRN)
@@ -195,8 +195,8 @@ if __name__ == "__main__":
     searchId = int(input("Digite um id para buscar no arquivo, de forma sequencial: \n"))
     register, comparisons, timer = linearSearchEmployeeById(file, searchId)
     formatRegister(register, comparisons, timer)
-    sortedFile = input("\nDigite o nome do novo arquivo ordenado: ")
-    keySorting(file, sortedFile)
+    time.sleep(1)
+    keySorting(file)
     print("Buscando pelo mesmo funcionário por Busca Binária:\n")
-    binary_register, binary_comparisons, binary_timer = binarySearch(sortedFile, searchId)
+    binary_register, binary_comparisons, binary_timer = binarySearch(file + "_ordenado", searchId)
     formatRegister(binary_register, binary_comparisons, binary_timer)
