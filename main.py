@@ -1,7 +1,6 @@
 import os
 import random
 import time
-from ctypes import sizeof
 
 from funcionario import Funcionario, KeyId, generateRandomValues
 
@@ -38,21 +37,34 @@ def generateBinaryDatabase(file_name: str):
 
 def getFileSize(file_name):
     file = open(file_name + ".dat", "r")
-    file.seek(0, os.SEEK_END)
-    return file.tell()
+    registersCount = 0
+    byte = file.read(1)
+
+    while byte:
+      if byte == '#':
+        registersCount += 1
+      byte = file.read(1)
+
+    file.close()
+    return registersCount   
 
 
 def readRegister(file_name, seek=0):
-  file = open(file_name + ".dat", "r")
+  file = open(file_name + ".dat", "rb")
   register = ""
-  byte = file.read(1)
   file.seek(seek)
+  hashSeek = 1
+  byte = file.read(1).decode()
 
-  while byte != '#':
+  while byte:
+    if byte == "#":
+      hashSeek += len(register) + seek
+      return register, hashSeek
     register += byte
-    byte = file.read(1)
+    byte = file.read(1).decode()
 
-  return register
+  file.close()
+  return register, hashSeek
 
 
 def linearSearchEmployeeById(file_name, id):
@@ -87,24 +99,44 @@ def linearSearchEmployeeById(file_name, id):
     return None, comparisons, time.time() - start
 
 
-def keySorting(file_name: str):
+def keySorting(file_name: str, sorted_file_name):
     start = time.time()
-    file = open(file_name + ".dat", "r+")
+    file = open(file_name + ".dat", "r")
     size = getFileSize(file_name)
     keys = [KeyId() for _ in range(size)]
     pos = 0
     offset = 0
+    register = ""
 
     while pos < size:
-      register = readRegister(file_name, offset)
-      offset = len(register)
-      file.seek(pos * offset)
+      file.seek(offset)
+      register, hashSeek = readRegister(file_name, offset)
+      offset = hashSeek
       keys[pos].RRN = file.tell()
       id = int(register.split("|")[0], 2)
       keys[pos].id = id
       pos += 1
+    
+    aux = KeyId()
+    for i in range(0, size):
+      for j in range(i+1, size):
+        if keys[i].id > keys[j].id:
+          aux = keys[i]
+          keys[i] = keys[j]
+          keys[j] = aux
+
+    file.seek(0, 0)
+
+    sort_file = open(sorted_file_name + ".dat", "wb")
+    print(f"Gerando arquivo ordenado...")
+    for k in range(0, size):
+      seek = file.seek(keys[k].RRN)
+      register, _ = readRegister(file_name, seek)
+      sort_file.write(register.encode() + "#".encode())
 
     file.close()
+    sort_file.close()
+    print(f"Tempo gasto para ordenação: {time.time() - start}")
 
 
 def formatRegister(register: str, comparisons: int, time):
@@ -130,7 +162,10 @@ def formatRegister(register: str, comparisons: int, time):
 if __name__ == "__main__":
     file = input("Digite o nome do arquivo binário: ")
     generateBinaryDatabase(file)
+    # print(f"Primeiro registro ao criar db: {readRegister(file)}")
     searchId = int(input("Digite um id para buscar no arquivo: \n"))
     register, comparisons, timer = linearSearchEmployeeById(file, searchId)
     formatRegister(register, comparisons, timer)
-    keySorting(file)
+    sortedFile = input("Digite o nome do novo arquivo ordenado: ")
+    keySorting(file, sortedFile)
+    # print(f"Primeiro registro após ordenar arquivo: {readRegister(sortedFile)}")
