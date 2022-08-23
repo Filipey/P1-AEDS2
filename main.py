@@ -1,9 +1,8 @@
 import os
 import random
-import sys
 import time
 
-from funcionario import Funcionario, KeyId, generateRandomValues
+from employee import Employee, KeyId, generateRandomValues
 
 
 def generateBinaryDatabase(file_name: str):
@@ -13,19 +12,19 @@ def generateBinaryDatabase(file_name: str):
         file = open(file_name + ".dat", "wb")
 
         while i < 100:
-            f = Funcionario()
+            e = Employee()
             id = random.choice(ids)
             ids.remove(id)
-            generateRandomValues(f, id)
-            file.write(bin(f.cod)[2:].encode())
+            generateRandomValues(e, id)
+            file.write(bin(e.id)[2:].encode())
             file.write("|".encode())
-            file.write(f.nome.encode())
+            file.write(e.name.encode())
             file.write("|".encode())
-            file.write(f.cpf.encode())
+            file.write(e.cpf.encode())
             file.write("|".encode())
-            file.write(f.data_nascimento.encode())
+            file.write(e.birthday_date.encode())
             file.write("|".encode())
-            file.write(str(f.salario).encode())
+            file.write(str(e.salary).encode())
             file.write("#".encode())
             i += 1
 
@@ -38,35 +37,35 @@ def generateBinaryDatabase(file_name: str):
 
 def getFileSize(file_name):
     file = open(file_name + ".dat", "r")
-    registersCount = 0
+    registers_count = 0
     byte = file.read(1)
 
     while byte:
       if byte == '#':
-        registersCount += 1
+        registers_count += 1
       byte = file.read(1)
 
     file.close()
-    return registersCount   
+    return registers_count   
 
 
-def getSpecificRegister(file_name, registerNumber):
+def getSpecificRegister(file_name, register_number):
   file = open(file_name + ".dat", "rb")
-  registerCount = 0
+  register_count = 0
   byte = file.read(1).decode()
   register = ""
-  founded = False
+  finded = False
   field = ""
 
-  while registerCount <= registerNumber:
+  while register_count <= register_number:
     register += byte
     field += byte
-    if field == bin(registerNumber)[2:] + "|":
-      founded = True
+    if field == bin(register_number)[2:] + "|":
+      finded = True
     
     if byte == "#":
-      registerCount += 1
-      if founded:
+      register_count += 1
+      if finded:
         file.close()
         return register
       register = ""
@@ -75,7 +74,6 @@ def getSpecificRegister(file_name, registerNumber):
       field = ""
     byte = file.read(1).decode()
   
-  RRN = file.tell()
   file.close()
   return register
 
@@ -84,18 +82,18 @@ def readRegister(file_name, seek=0):
   file = open(file_name + ".dat", "rb")
   register = ""
   file.seek(seek)
-  hashSeek = 1
+  hash_seek = 1
   byte = file.read(1).decode()
 
   while byte:
     if byte == "#":
-      hashSeek += len(register) + seek
-      return register, hashSeek
+      hash_seek += len(register) + seek
+      return register, hash_seek
     register += byte
     byte = file.read(1).decode()
 
   file.close()
-  return register, hashSeek
+  return register, hash_seek
 
 
 def linearSearchEmployeeById(file_name, id):
@@ -103,24 +101,24 @@ def linearSearchEmployeeById(file_name, id):
     print(f"Pesquisando o funcionário {id} por busca sequencial...")
     comparisons = 0
     byte = file.read(1).decode()
-    savedRegister = ""
+    saved_register = ""
     field = ""
-    searchId = bin(id)[2:]
+    search_id = bin(id)[2:]
     start = time.perf_counter()
-    founded = False
+    finded = False
 
     while byte:
         field += byte
-        savedRegister += byte
-        if field == searchId + "|":
-            founded = True
+        saved_register += byte
+        if field == search_id + "|":
+            finded = True
         if byte == "#":
             comparisons += 1
-            if founded:
-                totalTime = time.perf_counter() - start
+            if finded:
+                total_time = time.perf_counter() - start
                 file.close()
-                return savedRegister[:-1], comparisons, totalTime
-            savedRegister = ""
+                return saved_register[:-1], comparisons, total_time
+            saved_register = ""
             field = ""
         if byte == "|":
             field = ""
@@ -130,27 +128,23 @@ def linearSearchEmployeeById(file_name, id):
     return None, comparisons, time.perf_counter() - start
 
 def binarySearch(file_name, id):
-  start = time.perf_counter()
   file = open(file_name + ".dat", "rb")
   comparisons = 0
   left = 0
   right = getFileSize(file_name) - 1
   file.seek(0, 0)
-<<<<<<< HEAD
-=======
-  offset = 1
->>>>>>> f3e289bbc9545ac10914a039efe2a9120790e032
   register = ""
 
+  start = time.perf_counter()
   while left <= right:
     middle = int((left + right) // 2)
     register = getSpecificRegister(file_name, middle)
-    registerId = int(register.split("|")[0], 2)
+    register_id = int(register.split("|")[0], 2)
 
-    if id == registerId:
+    if id == register_id:
       comparisons += 1
       return register, comparisons, time.perf_counter() - start
-    elif registerId < id:
+    elif register_id < id:
       comparisons += 1
       left = middle + 1
     else:
@@ -171,8 +165,8 @@ def keySorting(file_name: str):
 
     while pos < size:
       file.seek(offset)
-      register, hashSeek = readRegister(file_name, offset)
-      offset = hashSeek
+      register, hash_seek = readRegister(file_name, offset)
+      offset = hash_seek
       keys[pos].RRN = file.tell()
       id = int(register.split("|")[0], 2)
       keys[pos].id = id
@@ -227,8 +221,7 @@ if __name__ == "__main__":
     searchId = int(input("Digite um id para buscar no arquivo, de forma sequencial: \n"))
     register, comparisons, timer = linearSearchEmployeeById(file, searchId)
     formatRegister(register, comparisons, timer)
-    time.sleep(1)
     keySorting(file)
-    print("Buscando pelo mesmo funcionário por Busca Binária:\n")
+    print("\nBuscando pelo mesmo funcionário por Busca Binária:\n")
     binary_register, binary_comparisons, binary_timer = binarySearch(file + "_ordenado", searchId)
     formatRegister(binary_register, binary_comparisons, binary_timer)
