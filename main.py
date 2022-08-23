@@ -49,6 +49,36 @@ def getFileSize(file_name):
     return registersCount   
 
 
+def getSpecificRegister(file_name, registerNumber):
+  file = open(file_name + ".dat", "rb")
+  registerCount = 0
+  byte = file.read(1).decode()
+  register = ""
+  founded = False
+  field = ""
+
+  while registerCount <= registerNumber:
+    register += byte
+    field += byte
+    if field == bin(registerNumber)[2:] + "|":
+      founded = True
+    
+    if byte == "#":
+      registerCount += 1
+      if founded:
+        file.close()
+        return register
+      register = ""
+      field = ""
+    if byte == "|":
+      field = ""
+    byte = file.read(1).decode()
+  
+  RRN = file.tell()
+  file.close()
+  return register
+
+
 def readRegister(file_name, seek=0):
   file = open(file_name + ".dat", "rb")
   register = ""
@@ -105,13 +135,11 @@ def binarySearch(file_name, id):
   left = 0
   right = getFileSize(file_name) - 1
   file.seek(0, 0)
-  offset = 0
   register = ""
 
   while left <= right:
     middle = int((left + right) // 2)
-    register, hashSeek = readRegister(file_name, middle * offset)
-    offset = hashSeek
+    register = getSpecificRegister(file_name, middle)
     registerId = int(register.split("|")[0], 2)
 
     if id == registerId:
