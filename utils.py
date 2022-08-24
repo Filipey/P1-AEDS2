@@ -67,7 +67,7 @@ def getSpecificRegister(file_name, register_number):
       register_count += 1
       if finded:
         file.close()
-        return register[:-1]
+        return register[:-1], file.tell()
       register = ""
       field = ""
     if byte == "|":
@@ -138,7 +138,7 @@ def binarySearch(file_name, id):
   
   while left <= right:
     middle = int((left + right) // 2)
-    register = getSpecificRegister(file_name, middle)
+    register, _ = getSpecificRegister(file_name, middle)
     register_id = int(register.split("|")[0], 2)
     
 
@@ -188,17 +188,7 @@ def keySorting(file_name: str):
     os.remove(file_name + ".dat")
     sort_file.close()
     print(f"Tempo gasto para ordenação: {time.perf_counter() - start}s")
-
-def insertionSort(file_name):
-  file = open(file_name + ".dat" + "wb")
-  file.seek(0, 0)
-  size = getFileSize()
-  j = 2
-
-  for j in range(size):
-    auxRegister = getSpecificRegister(file_name, j-1)
-    i = j - 1
-    file.seek()
+    
 
 def formatRegister(register: str, comparisons: int, time):
     if register is None:
