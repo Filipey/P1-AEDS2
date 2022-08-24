@@ -179,7 +179,7 @@ def keySorting(file_name: str):
     file.seek(0, 0)
 
     sort_file = open(file_name + "_ordenado" + ".dat", "wb")
-    print("\nGerando arquivo ordenado...")
+    print("\nQuestão 03 - Gerando arquivo ordenado...")
     for k in range(0, size):
       seek = file.seek(keys[k].RRN)
       register, _ = readRegister(file_name, seek)

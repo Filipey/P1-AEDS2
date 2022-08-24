@@ -8,13 +8,13 @@ def menu():
   
   file = input("Questão 01 - Digite o nome para a base de dados: ")
   generateBinaryDatabase(file)
-  search_id = int(input("Digite um id para buscar um funcionário no arquivo, de forma sequencial: \n"))
+  search_id = int(input("Questão 02 - Digite um id para buscar um funcionário no arquivo, de forma sequencial: \n"))
   register, comparisons, timer = linearSearchEmployeeById(file, search_id)
   formatRegister(register, comparisons, timer)
   time.sleep(2)
   keySorting(file)
   time.sleep(2)
-  print("\nAgora com o arquivo ordenado, será buscado o mesmo funcionário via Busca Binária: ")
+  print("\nQuestão 04 - Agora com o arquivo ordenado, será buscado o mesmo funcionário via Busca Binária: ")
   binary_register, binary_comparisons, binary_timer = binarySearch(file + "_ordenado", search_id)
   formatRegister(binary_register, binary_comparisons, binary_timer)
 
