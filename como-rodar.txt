@@ -1,0 +1,3 @@
+Prova 01 - AEDS 2 (CSI104) - Filipe Augusto Santos de Moura (20.2.8079)
+Para rodar o programa basta abrir um terminal neste diretório e digitar "python main.py" ou  "python3 main.py"
+É necessário ter o python instalado.
