@@ -32,6 +32,7 @@ def generateBinaryDatabase(file_name: str):
         print(IOError)
         exit(1)
     print("Base de dados gerada com sucesso!\n")
+    print("Foram gerados registros com Ids de 0 a 99")
     file.close()
 
 
@@ -67,7 +68,7 @@ def getSpecificRegister(file_name, register_number):
       register_count += 1
       if finded:
         file.close()
-        return register[:-1], file.tell()
+        return register[:-1]
       register = ""
       field = ""
     if byte == "|":
@@ -138,7 +139,7 @@ def binarySearch(file_name, id):
   
   while left <= right:
     middle = int((left + right) // 2)
-    register, _ = getSpecificRegister(file_name, middle)
+    register = getSpecificRegister(file_name, middle)
     register_id = int(register.split("|")[0], 2)
     
 
@@ -188,7 +189,6 @@ def keySorting(file_name: str):
     os.remove(file_name + ".dat")
     sort_file.close()
     print(f"Tempo gasto para ordenação: {time.perf_counter() - start}s")
-    
 
 def formatRegister(register: str, comparisons: int, time):
     if register is None:

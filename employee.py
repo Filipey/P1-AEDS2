@@ -15,15 +15,22 @@ class KeyId:
   RRN: int
 
 def generateRandomValues(e: Employee, id: int):
+  
   e.id = id
   e.name = "".join(random.choice(string.ascii_lowercase) for _ in range(50))
   e.cpf = formatCpf("".join(str(random.randint(0, 9)) for _ in range(15)))
-  e.birthday_date = formatBirthdayDate("".join(str(random.randint(0, 9)) for _ in range(11)))
+  
+  e.birthday_date = getRandomBirthdayDate()
   e.salary = round(random.uniform(1, 10000), 2)
 
-def formatBirthdayDate(date: str):
-  formattedDate = date[0:2] + "/" + date[3:5] + "/" + date[6:10]
-  return formattedDate
+def getRandomBirthdayDate():
+  day = (str(random.randint(1, 31)))
+  month = (str(random.randint(1, 12)))
+  year = str(random.randint(1900, 2022))
+
+
+  formatted_date = day + "/" + month + "/" + year
+  return formatted_date
 
 def formatCpf(cpf: str):
   formattedCpf = cpf[0:3] + "." + cpf[4:7] + "." + cpf[7:10] + "-" + cpf[11:13]
