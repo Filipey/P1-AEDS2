@@ -98,6 +98,7 @@ def readRegister(file_name, seek=0):
 
 
 def linearSearchEmployeeById(file_name, id):
+    start = time.perf_counter()
     file = open(file_name + ".dat", "rb")
     print(f"Pesquisando o funcionário {id} por busca sequencial...")
     comparisons = 0
@@ -105,7 +106,6 @@ def linearSearchEmployeeById(file_name, id):
     saved_register = ""
     field = ""
     search_id = bin(id)[2:]
-    start = time.perf_counter()
     finded = False
 
     while byte:
@@ -142,7 +142,6 @@ def binarySearch(file_name, id):
     register = getSpecificRegister(file_name, middle)
     register_id = int(register.split("|")[0], 2)
     
-
     if id == register_id:
       comparisons += 1
       return register, comparisons, time.perf_counter() - start
@@ -197,7 +196,7 @@ def formatRegister(register: str, comparisons: int, time):
         return
 
     fields = register.split("|")
-    [id, name, cpf, birthday_date, salary] = fields
+    id, name, cpf, birthday_date, salary = fields
 
     print("Funcionário encontrado:\n")
     print(
