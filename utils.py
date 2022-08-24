@@ -134,12 +134,13 @@ def binarySearch(file_name, id):
   right = getFileSize(file_name) - 1
   file.seek(0, 0)
   register = ""
-
   start = time.perf_counter()
+  
   while left <= right:
     middle = int((left + right) // 2)
     register = getSpecificRegister(file_name, middle)
     register_id = int(register.split("|")[0], 2)
+    
 
     if id == register_id:
       comparisons += 1
@@ -172,13 +173,7 @@ def keySorting(file_name: str):
       keys[pos].id = id
       pos += 1
     
-    aux = KeyId()
-    for i in range(0, size):
-      for j in range(i+1, size):
-        if keys[i].id > keys[j].id:
-          aux = keys[i]
-          keys[i] = keys[j]
-          keys[j] = aux
+    keys.sort(key=lambda x: x.id)
 
     file.seek(0, 0)
 
@@ -194,6 +189,16 @@ def keySorting(file_name: str):
     sort_file.close()
     print(f"Tempo gasto para ordenação: {time.perf_counter() - start}s")
 
+def insertionSort(file_name):
+  file = open(file_name + ".dat" + "wb")
+  file.seek(0, 0)
+  size = getFileSize()
+  j = 2
+
+  for j in range(size):
+    auxRegister = getSpecificRegister(file_name, j-1)
+    i = j - 1
+    file.seek()
 
 def formatRegister(register: str, comparisons: int, time):
     if register is None:
