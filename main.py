@@ -11,8 +11,14 @@ def menu():
   search_id = int(input("Questão 02 - Digite um id para buscar um funcionário no arquivo, de forma sequencial: \n"))
   register, comparisons, timer = linearSearchEmployeeById(file, search_id)
   formatRegister(register, comparisons, timer)
-  time.sleep(2)
-  keySorting(file)
+  option = int(input("\nQual forma de ordenação?\n(1) KeySorting\n(2) InsertionSort\n"))
+  if option == 1:
+    keySorting(file)
+  elif option == 2:
+    insertionSortMemory(file)
+  else:
+    print("Opção inválida. Ordenação padrão selecionada. (KeySorting)")
+    keySorting(file)
   time.sleep(2)
   print("\nQuestão 04 - Agora com o arquivo ordenado, será buscado o mesmo funcionário via Busca Binária: ")
   binary_register, binary_comparisons, binary_timer = binarySearch(file + "_ordenado", search_id)
